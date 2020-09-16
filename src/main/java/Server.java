@@ -67,7 +67,7 @@ public class Server {
                         if (answers[3].toLowerCase().startsWith("y"))
                             dayCost += 100;
 
-                        int totalCost = ((dayCost * numberOfDays) + costOfTravel) * numberOfTravelers ;
+                        int totalCost = ((dayCost * numberOfDays) + costOfTravel) * numberOfTravelers;
                         pw.println("it will Cost:" + totalCost + " SEK");
                     }
                     pw.println(questions[i]);
@@ -76,23 +76,28 @@ public class Server {
                     String answer = br.readLine();
                     if (answer != null) {
                         if (answer.equalsIgnoreCase("bye")) {
-                            server.close();
                             client.close();
                             cancelOrder = true;
                             break;
                         }
                         answers[i] = answer;
                     }
+                    Thread.sleep(10);
                 }
-                if (!cancelOrder){
+                if (cancelOrder) {
+                    System.out.println("Order cancelled");
+                } else {
+                    pw.println("Your Order is:\n");
                     for (int i = 0; i < 7; i++) {
                         System.out.println(questions[i] + " = " + answers[i]);
+                        pw.println(questions[i] + " = " + answers[i] + "\n");
                     }
+                    pw.flush();
                     // TODO: save in file
                     // TODO: send file
                 }
 
-            } catch (IOException ignored) {
+            } catch (IOException | InterruptedException ignored) {
 
             }
         }
