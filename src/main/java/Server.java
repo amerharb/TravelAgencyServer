@@ -51,9 +51,10 @@ public class Server {
                 // Read data from the client
                 InputStream clientIn = client.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(clientIn));
-                boolean cancelOrder = false; // flag if the client type bye
+                boolean cancelOrder = true; // flag if the client type bye
                 int totalCost = 0;
                 for (int i = 0; i < 7; i++) {
+                    cancelOrder = false;
                     if (i == 4) { // calc the price and send it to client
                         int numberOfTravelers = Integer.parseInt(answers[0]);
                         int costOfTravel = 0;
@@ -82,6 +83,9 @@ public class Server {
                             break;
                         }
                         answers[i] = answer;
+                    } else {
+                        cancelOrder = true;
+                        break;
                     }
                 }
                 if (cancelOrder) {
@@ -102,12 +106,31 @@ public class Server {
                     }
                     pw.flush();
 
+                    // save file
                     String filename = "./Order" + System.currentTimeMillis() + ".txt";
                     saveFile(order.toString(), filename);
-                    // TODO: send file
+
+                    // send file
+                    File myFile = new File(filename);
+                    byte[] bytes = new byte[(int) myFile.length()];
+                    FileInputStream fis = new FileInputStream(myFile);
+                    BufferedInputStream bis = new BufferedInputStream(fis);
+                    bis.read(bytes, 0, bytes.length);
+                    System.out.println("Sending " + filename + " (" + bytes.length + " bytes)");
+                    pw.println("FILE BEGIN ...");
+                    pw.println(filename);
+                    pw.println(bytes.length);
+                    pw.flush();
+                    clientOut.write(bytes, 0, bytes.length);
+                    clientOut.flush();
+                    System.out.println("Done.");
+                    fis.close();
+                    bis.close();
                 }
 
             } catch (IOException ignored) {
+
+            } finally {
 
             }
         }
