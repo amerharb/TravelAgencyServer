@@ -55,15 +55,19 @@ public class Server {
                     if (i == 4) { // calc the price and send it to client
                         int numberOfTravelers = Integer.parseInt(answers[0]);
                         int costOfTravel = 0;
-                        if (answers[1].startsWith("F"))
+                        if (answers[1].toLowerCase().startsWith("f"))
                             costOfTravel = 600;
                         else
                             costOfTravel = 900;
 
                         int numberOfDays = Integer.parseInt(answers[2]);
 
-                        int price = (numberOfDays * numberOfTravelers) + costOfTravel;
-                        pw.println("it will Cost:" + price);
+                        int dayCost = 250;
+                        if (answers[3].toLowerCase().startsWith("y"))
+                            dayCost += 100;
+
+                        int totalCost = ((dayCost * numberOfDays) + costOfTravel) * numberOfTravelers ;
+                        pw.println("it will Cost:" + totalCost + " SEK");
                     }
                     pw.println(questions[i]);
                     pw.flush();
