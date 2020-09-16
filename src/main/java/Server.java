@@ -31,32 +31,43 @@ public class Server {
                 // Send Welcome message
                 OutputStream clientOut = client.getOutputStream();
                 PrintWriter pw = new PrintWriter(clientOut, true);
-                String ansMsg = "Welcome to vacation planner! Our prices are as follows:\n" +
+                String welcomeMsg = "Welcome to vacation planner! Our prices are as follows:\n" +
                         "The travel cost by ferry per person is 600 SEK. For air travel, it will be 900 SEK.\n" +
-                        "Accommodation is 250 SEK per person per night. Meals cost 100 SEK per person per day.\n" +
-                        "Please Enter number of travelers:-";
-                pw.println(ansMsg);
+                        "Accommodation is 250 SEK per person per night. Meals cost 100 SEK per person per day.\n";
+                pw.println(welcomeMsg);
                 pw.flush();
+
+                String[] questions = new String[6];
+                questions[0] = "Please Enter number of travelers: ";
+                questions[1] = "Ferry or Air Travel";
+                questions[2] = "Number of days";
+                questions[3] = "Contact";
+                questions[4] = "Phone number";
+                questions[5] = "Address";
+
+                String[] answers = new String[6];
 
                 // Read data from the client
                 InputStream clientIn = client.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(clientIn));
-                String msgFromClient = br.readLine();
-                System.out.println("Message received from client = " + msgFromClient);
+                for (int i = 0; i < 6; i++) {
+                    pw.println(questions[i]);
+                    pw.flush();
 
-                if (msgFromClient != null) {
-                    // Send response to the client
-                    if (!msgFromClient.equalsIgnoreCase("bye")) {
-                        pw.println(ansMsg);
-                    }
-
-                    // Close sockets
-                    if (msgFromClient.equalsIgnoreCase("bye")) {
-                        server.close();
-                        client.close();
-                        break;
+                    String answer = br.readLine();
+                    if (answer != null) {
+                        if (answer.equalsIgnoreCase("bye")) {
+                            server.close();
+                            client.close();
+                            break;
+                        }
+                        answers[i] = answer;
                     }
                 }
+                for (int i = 0; i < 6; i++) {
+                    System.out.println(questions[i] + " = " + answers[i]);
+                }
+
             } catch (IOException ignored) {
 
             }
