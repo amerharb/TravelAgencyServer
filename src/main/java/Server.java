@@ -121,6 +121,7 @@ public class Server {
                     pw.println(filename);
                     pw.println(bytes.length);
                     pw.flush();
+                    Thread.sleep(100);
                     clientOut.write(bytes, 0, bytes.length);
                     clientOut.flush();
                     System.out.println("Done.");
@@ -128,7 +129,7 @@ public class Server {
                     bis.close();
                 }
 
-            } catch (IOException ignored) {
+            } catch (IOException | InterruptedException ignored) {
 
             } finally {
 
