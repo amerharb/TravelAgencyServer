@@ -52,6 +52,7 @@ public class Server {
                 InputStream clientIn = client.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(clientIn));
                 boolean cancelOrder = false; // flag if the client type bye
+                int totalCost = 0;
                 for (int i = 0; i < 7; i++) {
                     if (i == 4) { // calc the price and send it to client
                         int numberOfTravelers = Integer.parseInt(answers[0]);
@@ -67,7 +68,7 @@ public class Server {
                         if (answers[3].toLowerCase().startsWith("y"))
                             dayCost += 100;
 
-                        int totalCost = ((dayCost * numberOfDays) + costOfTravel) * numberOfTravelers;
+                        totalCost = ((dayCost * numberOfDays) + costOfTravel) * numberOfTravelers;
                         pw.println("it will Cost:" + totalCost + " SEK");
                     }
                     pw.println(questions[i]);
@@ -82,25 +83,40 @@ public class Server {
                         }
                         answers[i] = answer;
                     }
-                    Thread.sleep(10);
                 }
                 if (cancelOrder) {
                     System.out.println("Order cancelled");
                 } else {
                     pw.println("Your Order is:\n");
+                    StringBuilder order = new StringBuilder();
+                    String orderLine = "Total Cost: " + totalCost;
+                    order.append(orderLine);
+                    order.append("\n");
+                    pw.println(orderLine);
                     for (int i = 0; i < 7; i++) {
-                        System.out.println(questions[i] + " = " + answers[i]);
-                        pw.println(questions[i] + " = " + answers[i] + "\n");
+                        orderLine = questions[i] + " = " + answers[i];
+                        order.append(orderLine);
+                        order.append("\n");
+                        System.out.println(orderLine);
+                        pw.println(orderLine);
                     }
                     pw.flush();
-                    // TODO: save in file
+
+                    String filename = "./Order" + System.currentTimeMillis() + ".txt";
+                    saveFile(order.toString(), filename);
                     // TODO: send file
                 }
 
-            } catch (IOException | InterruptedException ignored) {
+            } catch (IOException ignored) {
 
             }
         }
     }
 
+    private static void saveFile(String body, String filename) throws IOException {
+        File file = new File(filename);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(body);
+        }
+    }
 }
