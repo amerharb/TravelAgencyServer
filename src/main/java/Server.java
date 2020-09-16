@@ -28,25 +28,34 @@ public class Server {
                 int clientPort = client.getPort();
                 System.out.println("Client host = " + clientHost + " Client port = " + clientPort);
 
+                // Send Welcome message
+                OutputStream clientOut = client.getOutputStream();
+                PrintWriter pw = new PrintWriter(clientOut, true);
+                String ansMsg = "Welcome to vacation planner! Our prices are as follows:\n" +
+                        "The travel cost by ferry per person is 600 SEK. For air travel, it will be 900 SEK.\n" +
+                        "Accommodation is 250 SEK per person per night. Meals cost 100 SEK per person per day.\n" +
+                        "Please Enter number of travelers:-";
+                pw.println(ansMsg);
+                pw.flush();
+
                 // Read data from the client
                 InputStream clientIn = client.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(clientIn));
                 String msgFromClient = br.readLine();
                 System.out.println("Message received from client = " + msgFromClient);
 
-                // Send response to the client
-                if (msgFromClient != null && !msgFromClient.equalsIgnoreCase("bye")) {
-                    OutputStream clientOut = client.getOutputStream();
-                    PrintWriter pw = new PrintWriter(clientOut, true);
-                    String ansMsg = "Hello, " + msgFromClient;
-                    pw.println(ansMsg);
-                }
+                if (msgFromClient != null) {
+                    // Send response to the client
+                    if (!msgFromClient.equalsIgnoreCase("bye")) {
+                        pw.println(ansMsg);
+                    }
 
-                // Close sockets
-                if (msgFromClient != null && msgFromClient.equalsIgnoreCase("bye")) {
-                    server.close();
-                    client.close();
-                    break;
+                    // Close sockets
+                    if (msgFromClient.equalsIgnoreCase("bye")) {
+                        server.close();
+                        client.close();
+                        break;
+                    }
                 }
             } catch (IOException ignored) {
 
