@@ -39,9 +39,9 @@ public class Server {
 
                 String[] questions = new String[7];
                 questions[0] = "Please Enter number of travelers: ";
-                questions[1] = "Ferry or Air Travel";
+                questions[1] = "Ferry or Air Travel (f/a)";
                 questions[2] = "Number of days";
-                questions[3] = "Meal included or Not";
+                questions[3] = "Meal included or Not (yes/no)";
                 questions[4] = "Contact";
                 questions[5] = "Phone number";
                 questions[6] = "Address";
@@ -51,6 +51,7 @@ public class Server {
                 // Read data from the client
                 InputStream clientIn = client.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(clientIn));
+                boolean cancelOrder = false; // flag if the client type bye
                 for (int i = 0; i < 7; i++) {
                     if (i == 4) { // calc the price and send it to client
                         int numberOfTravelers = Integer.parseInt(answers[0]);
@@ -77,13 +78,18 @@ public class Server {
                         if (answer.equalsIgnoreCase("bye")) {
                             server.close();
                             client.close();
+                            cancelOrder = true;
                             break;
                         }
                         answers[i] = answer;
                     }
                 }
-                for (int i = 0; i < 6; i++) {
-                    System.out.println(questions[i] + " = " + answers[i]);
+                if (!cancelOrder){
+                    for (int i = 0; i < 7; i++) {
+                        System.out.println(questions[i] + " = " + answers[i]);
+                    }
+                    // TODO: save in file
+                    // TODO: send file
                 }
 
             } catch (IOException ignored) {
