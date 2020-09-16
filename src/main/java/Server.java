@@ -37,20 +37,34 @@ public class Server {
                 pw.println(welcomeMsg);
                 pw.flush();
 
-                String[] questions = new String[6];
+                String[] questions = new String[7];
                 questions[0] = "Please Enter number of travelers: ";
                 questions[1] = "Ferry or Air Travel";
                 questions[2] = "Number of days";
-                questions[3] = "Contact";
-                questions[4] = "Phone number";
-                questions[5] = "Address";
+                questions[3] = "Meal included or Not";
+                questions[4] = "Contact";
+                questions[5] = "Phone number";
+                questions[6] = "Address";
 
-                String[] answers = new String[6];
+                String[] answers = new String[7];
 
                 // Read data from the client
                 InputStream clientIn = client.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(clientIn));
-                for (int i = 0; i < 6; i++) {
+                for (int i = 0; i < 7; i++) {
+                    if (i == 4) { // calc the price and send it to client
+                        int numberOfTravelers = Integer.parseInt(answers[0]);
+                        int costOfTravel = 0;
+                        if (answers[1].startsWith("F"))
+                            costOfTravel = 600;
+                        else
+                            costOfTravel = 900;
+
+                        int numberOfDays = Integer.parseInt(answers[2]);
+
+                        int price = (numberOfDays * numberOfTravelers) + costOfTravel;
+                        pw.println("it will Cost:" + price);
+                    }
                     pw.println(questions[i]);
                     pw.flush();
 
